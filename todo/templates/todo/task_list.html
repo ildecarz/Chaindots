@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ToDo App
+{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+    <br>
+        <h1>ToDo List</h1>
+    
+    <div class="alert alert-{{ message.tags }}">
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+    <div>
+    <hr>
+
+    <form method="POST" action="{% url 'task_create' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Add new task</button>
+    </form>
+
+    {% if tasks %}
+    <hr>
+
+    <h2>Tasks</h2>
+
+    <ul>
+    {% for task in tasks %}
+        <form method="POST" action="{% url 'task_update' task.id %}">
+            {% csrf_token %}
+            <input type="checkbox" name="completed" {% if task.completed %}checked{% endif %}>
+            <input type="text" name="description" value="{{ task.description }}">
+            <button class="btn btn-primary" type="submit">Edit task</button>
+        </form>
+        <form method="POST" action="{% url 'task_delete' task.id %}">
+            {% csrf_token %}
+            <button class="btn btn-danger" type="submit">Delete task</button>
+        </form>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if completed_tasks %}
+      <hr>
+      <h2>Completed Tasks</h2>
+      <ul>
+        {% for task in completed_tasks %}
+          <li><span style="text-decoration: line-through;">{{ task.description }}</span></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <hr>
+</div>
+
+{% endblock %}
